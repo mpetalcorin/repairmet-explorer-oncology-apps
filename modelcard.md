@@ -1,81 +1,214 @@
-# Model Card, Simulated Translational Oncology DMPK Workflow
+# Model Card: RepairMet Explorer
 
-## Model summary
-This project contains several statistical and machine learning models trained on a simulated oncology DMPK portfolio. The models are intended to demonstrate how early ADME, safety, potency, and translational variables can be integrated for developability classification, human PK prediction, and candidate ranking.
+## Model name
 
-## Models included
-### 1. Developability classification
-Binary classification models are used to predict whether a compound belongs to the high-developability tier.
-Included models:
-- Logistic regression.
-- Random forest classifier.
+RepairMet Explorer
 
-### 2. Human PK regression
-Regression models are used to estimate projected human pharmacokinetic properties.
-Included models:
-- Ridge regression.
-- Gradient boosting regressor.
-- Multilayer perceptron regressor.
+## Model type
 
-### 3. Composite ranking model
-A transparent weighted multi-objective score is used to prioritise compounds based on coverage, exposure, safety, and dose-related variables. This is a decision-support ranking framework, not a machine learning model in the strict sense.
+Mechanistically curated, rule-based, interpretable decision-support engine for oncology research.
 
-## Intended use
-These models are intended for:
-- Educational demonstration of translational DMPK workflows.
-- Portfolio-style illustration of candidate triage and prioritisation.
-- Interview, presentation, or skills demonstration in quantitative pharmacology and drug discovery.
+## Version
 
-These models are not intended for:
-- Real medicinal chemistry decisions.
-- IND-enabling package generation.
-- Clinical dose selection.
-- Regulatory submission.
-- Patient-level prediction or clinical risk estimation.
+Current concept release
+
+## Summary
+
+RepairMet Explorer is a transparent scoring framework that integrates DNA repair, replication stress, and metabolic-state features into ranked mechanistic vulnerability hypotheses. It is designed for research hypothesis prioritization rather than clinical prediction.
+
+The system accepts a compact tumour-state feature vector, derives composite biological states, compares the sample to a curated vulnerability library, applies bounded evidence weighting, and returns ranked outputs with contributor traces and suggested next-step assays.
+
+## Intended purpose
+
+The model is intended to help researchers answer the question:
+
+“Given this tumour-like biological profile, which survival dependency appears most plausible, and what should be tested next?”
+
+## Intended users
+
+- molecular biologists
+- cancer biologists
+- translational researchers
+- computational biologists
+- biomedical data scientists
+- interdisciplinary oncology teams
+
+## Out-of-scope use
+
+The model is not intended for:
+
+- clinical diagnosis
+- direct treatment recommendation
+- risk prediction for patients
+- autonomous medical decision making
+- replacement of pathology review, laboratory validation, or clinical judgment
 
 ## Inputs
-Typical model inputs include:
-- Molecular descriptors, such as molecular weight, cLogP, topological polar surface area, hydrogen-bond counts, rotatable bonds, pKa, and aromatic ring count.
-- ADME variables, such as solubility, plasma free fraction, HLM intrinsic clearance, hepatocyte intrinsic clearance, Caco-2 permeability, and efflux ratio.
-- Safety variables, such as CYP inhibition proxies and hERG liability proxy.
-- Pharmacology variables, such as biochemical potency, cellular potency, tumor-plasma ratio, and coverage-related quantities.
+
+The current release expects ten features scored on a 0 to 100 scale:
+
+- hrd
+- fork
+- repStress
+- atr
+- glycolysis
+- oxphos
+- glutamine
+- ros
+- redox
+- lactate
+
+Optional evidence-weighting inputs:
+
+- pathway
+- assay
+- omics
+- expert
+
+## Internal representation
+
+### Step 1
+Normalize each feature to the interval from 0 to 1.
+
+### Step 2
+Compress the normalized feature vector into five composite biological states:
+
+- repairDefect
+- replicationBurden
+- glycolyticAcidLoad
+- mitoPlasticity
+- redoxFragility
+
+### Step 3
+Compare the sample profile against curated hypothesis signatures.
+
+### Step 4
+Compute a base mechanistic score and apply a bounded evidence multiplier.
+
+### Step 5
+Rank the resulting mechanistic hypotheses.
 
 ## Outputs
-The workflow produces:
-- Probability of high developability.
-- Predicted human clearance.
-- Predicted oral bioavailability.
-- Feature-importance estimates.
-- Composite candidate rank.
 
-## Training data
-All models were trained on a simulated dataset of 320 compounds. The data were generated to mimic broad literature-style ranges for oncology drug discovery variables. The dataset was not derived from experimental measurements of real candidate molecules.
+For each sample, the model returns:
 
-## Performance summary
-### Developability classification
-In the executed notebook, the random forest classifier achieved strong performance relative to logistic regression, showing that nonlinear interactions among DMPK features improved prediction of the simulated high-tier class.
+- normalized_features
+- composite_state
+- ranked_hypotheses
 
-### Human PK regression
-Oral bioavailability was predicted substantially better than projected human clearance. This suggests that the synthetic data structure encoded oral exposure more directly, while clearance remained a harder endpoint because of its multidimensional determinants.
+Each ranked hypothesis includes:
 
-## Interpretation
-Feature-importance results suggested that solubility, intrinsic clearance, hERG margin, lipophilicity, and cellular potency were among the major drivers of high-tier classification in this simulated environment. These findings are qualitatively consistent with how developability is often viewed in translational DMPK.
+- id
+- title
+- mechanism
+- next_step
+- score
+- base_score
+- evidence_multiplier
+- explain
 
-## Assumptions
-- The dataset is synthetic and rule-informed.
-- Labels partly reflect the simulation logic used to generate compound quality tiers.
-- Relationships among variables are simplified and may not capture full biological or pharmacokinetic complexity.
-- The PK/PD component is a simplified scenario model, not a full PBPK or QSP framework.
+## Hypothesis library
+
+The current model includes:
+
+1. POLQ / PARP synthetic lethality axis
+2. ATR / WEE1 / CHK1 checkpoint dependence
+3. LDHA / lactate export vulnerability
+4. GLS / glutamine anaplerosis dependence
+5. SLC7A11 / GPX4 redox defense
+6. OXPHOS overload and mitochondrial stress
+
+## Scientific assumptions
+
+The model assumes that tumours are:
+
+- adaptive
+- stress-laden
+- dependency-driven
+- mechanistically organized
+- representable as interpretable functional states
+
+It also assumes that vulnerabilities emerge from interactions among:
+
+- DNA repair capacity
+- replication-stress handling
+- metabolic adaptation
+- oxidative and redox balance
+
+## Strengths
+
+- transparent scoring logic
+- human-readable input space
+- contributor-level explanation
+- evidence-weighting support
+- cohort-compatible workflow
+- easy export for reports and team review
+- useful for translational hypothesis generation
 
 ## Limitations
-- No real experimental compounds are represented.
-- The models may overstate performance because the simulation embeds coherent structure.
-- External validity is unknown.
-- Safety and DDI variables are simplified proxies.
-- Tumor exposure is represented by reduced-form surrogates rather than full tissue distribution modelling.
 
-## Ethical and practical considerations
-This workflow should not be used to make real scientific, clinical, or regulatory decisions. It is best viewed as a transparent computational demonstration of how DMPK data, modelling, and machine learning can be combined in a candidate-selection framework.
+- rule-based rather than outcome-trained
+- not calibrated against clinical endpoints
+- no uncertainty quantification in current version
+- depends on upstream interpretation of feature values
+- limited current hypothesis library
+- not tumour-type specific
+- cannot autonomously discover new interactions
+
+## Risks and caveats
+
+The model may produce misleading rankings if:
+
+- input scores are poorly estimated
+- features are inconsistent across cohorts
+- assays are noisy or weakly mapped to the feature layer
+- the biological context falls outside the current hypothesis library
+- evidence weights are assigned unrealistically
+
+## Evaluation status
+
+The current version is a concept-stage mechanistic prioritization engine. It has been designed for biological coherence and interpretability rather than predictive benchmarking against patient outcomes.
+
+Illustrative use cases show biologically plausible prioritization of:
+
+- checkpoint dependence in replication-stressed samples
+- backup repair in HR-deficient samples
+- glycolytic acid handling in lactate-dominant samples
+
+Formal large-scale validation remains future work.
+
+## Ethical and safety considerations
+
+Because the model can generate persuasive mechanistic rankings, users should avoid overinterpreting outputs as clinical truth. Results should be treated as structured hypotheses requiring experimental validation.
+
+## Recommended use practice
+
+Use the model as:
+
+- a scientific triage tool
+- a discussion aid
+- a hypothesis-ranking layer
+- a bridge between data review and experimental planning
+
+Do not use the model as:
+
+- a stand-alone clinical decision engine
+- a substitute for biological expertise
+- a substitute for wet-lab confirmation
+
+## Future improvements
+
+- tumour-type-specific scoring priors
+- learned parameter refinement
+- formal uncertainty estimation
+- assay-to-feature standardization
+- larger curated vulnerability library
+- external benchmarking on public and internal translational datasets
+- calibration against experimental or clinical outcomes
+
+## Contact / maintainer
+
+**Mark I.R. Petalcorin**
 
 ## Maintenance
-This model card applies to the current proof-of-concept notebook and associated simulated dataset. Any future expansion to real data would require substantial revision of the model description, validation framework, performance metrics, and risk statement.
+Any future expansion to real data would require substantial revision of the model Apps description, validation framework, performance metrics, and risk statement.
