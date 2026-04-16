@@ -131,6 +131,39 @@ RepairMetExplorer/
       styles.css
     package.json
 ```
+## Intended use
+
+RepairMet Explorer is intended for:
+	•	translational hypothesis generation
+	•	wet-lab planning
+	•	interdisciplinary scientific discussion
+	•	cohort triage
+	•	report generation
+	•	explainable systems-oncology prototyping
+
+Not intended for clinical use
+
+This software is not a diagnostic device and is not intended for direct clinical treatment selection. It is a mechanistically curated research decision-support prototype.
+
+## Current limitations
+	•	not trained on patient outcome labels
+	•	not clinically calibrated
+	•	depends on upstream biological interpretation of feature values
+	•	uses a curated hypothesis library rather than autonomous discovery
+	•	not tumour-type specific in the current release
+
+## Future directions
+
+Potential extensions include:
+	•	tumour-type-specific priors
+	•	uncertainty estimation
+	•	expanded vulnerability ontology
+	•	standardized assay-to-feature mapping
+	•	data-driven parameter refinement
+	•	cohort clustering and subgroup analysis
+	•	richer export formats
+	•	integration with multi-omics pipelines
+  
 ## Citation
 **Petalcorin, M.I.R. (2026). RepairMet Explorer: An explainable decision-support workflow linking DNA repair, 
 replication stress, and metabolic vulnerability in oncology. https://github.com/mpetalcorin/repairmet-explorer-oncology-apps
